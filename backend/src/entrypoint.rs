@@ -4,7 +4,8 @@ use std::net::SocketAddr;
 pub async fn entrypoint() {
     let router = Router::new()
         .route("/", get(async || (StatusCode::OK, "Hello, world!")))
-        .merge(crate::routes::make_user_routes());
+        .merge(crate::routes::make_user_routes())
+        .merge(crate::routes::make_quotes_routes());
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8081));
     let server = axum::Server::bind(&addr)

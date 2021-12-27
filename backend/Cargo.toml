@@ -6,7 +6,6 @@ license = "MIT"
 repository = "https://github.com/jay3332/KeyMaster"
 
 [dependencies]
-num-bigint = "0.3"
 dotenv = "0.15.0"
 http = "0.2"
 serde = "1.0"
@@ -21,7 +20,7 @@ features = ["128bit"]
 
 [dependencies.sqlx]
 version = "0.5.9"
-features = ["bigdecimal", "postgres", "macros", "offline", "runtime-tokio-rustls", "time"]
+features = ["postgres", "macros", "offline", "runtime-tokio-rustls", "time"]
 
 [dependencies.tokio]
 version = "1.14"

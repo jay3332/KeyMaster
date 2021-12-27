@@ -17,3 +17,25 @@ impl Serialize for Error {
         state.end()
     }
 }
+
+#[derive(Deserialize, Clone)]
+pub struct Success {
+    /// The success message.
+    pub message: String,
+
+    /// The ID of whatever object was created, if applicable.
+    pub id: Option<u64>,
+}
+
+impl Serialize for Success {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("Success", 2)?;
+
+        state.serialize_field("message", &self.message)?;
+        state.serialize_field("id", &self.id)?;
+        state.end()
+    }
+}
