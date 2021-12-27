@@ -351,3 +351,4 @@ MigrationBackup/
 
 backend/target
 backend/Cargo.lock
+**/.env
