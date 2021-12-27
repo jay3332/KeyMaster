@@ -1,11 +1,11 @@
-use serde::{Serialize, Serializer, Deserialize, ser::SerializeStruct};
+use serde::{ser::SerializeStruct, Deserialize, Serialize, Serializer};
 
 #[derive(Deserialize, Clone)]
 pub struct User {
     /// The user's unique ID.
     pub id: u64,
 
-    /// The username of this user. 
+    /// The username of this user.
     pub name: String,
 
     /// The discriminator of this user.
@@ -13,7 +13,10 @@ pub struct User {
 }
 
 impl Serialize for User {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
         let mut state = serializer.serialize_struct("User", 3)?;
 
         state.serialize_field("id", &self.id)?;

@@ -1,4 +1,4 @@
-use serde::{Serialize, Serializer, Deserialize, ser::SerializeStruct};
+use serde::{ser::SerializeStruct, Deserialize, Serialize, Serializer};
 
 #[derive(Deserialize, Clone)]
 pub struct Error {
@@ -7,7 +7,10 @@ pub struct Error {
 }
 
 impl Serialize for Error {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
         let mut state = serializer.serialize_struct("Error", 1)?;
 
         state.serialize_field("message", &self.message)?;

@@ -7,9 +7,13 @@ pub async fn entrypoint() {
         .merge(crate::routes::make_user_routes());
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8081));
-    let server = axum::Server::bind(&addr).serve(router.into_make_service()).with_graceful_shutdown(async {
-        tokio::signal::ctrl_c().await.expect("Failed to listen for Ctrl+C.");
-    });
+    let server = axum::Server::bind(&addr)
+        .serve(router.into_make_service())
+        .with_graceful_shutdown(async {
+            tokio::signal::ctrl_c()
+                .await
+                .expect("Failed to listen for Ctrl+C.");
+        });
 
     server.await.expect("Failed to start HTTP server.");
 }
