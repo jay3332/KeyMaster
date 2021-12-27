@@ -8,12 +8,7 @@ pub async fn get_user(Path(id): Path<u64>) -> Result<JsonResponse<User>, JsonRes
     let db = get_database!();
     let user = sqlx::query!("SELECT * FROM users WHERE id = $1", id as i64)
         .fetch_optional(db)
-        .await
-        .map_err(|e|
-            JsonResponse::new(500, Error {
-                message: format!("Database returned an error: {:?}", e),
-            })
-        )?
+        .await?
         .ok_or(
             JsonResponse::new(404, Error {
                 message: "User not found".to_string(),

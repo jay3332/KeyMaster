@@ -20,5 +20,4 @@ async fn main() {
 
     database::start().await;
     entrypoint::entrypoint().await;
-    get_database!();
 }

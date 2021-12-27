@@ -47,3 +47,11 @@ impl<T> IntoResponse for JsonResponse<T> where T: Serialize {
         )
     }
 }
+
+impl From<sqlx::Error> for JsonResponse<crate::types::Error> {
+    fn from(err: sqlx::Error) -> Self {
+        Self::new(500, crate::types::Error {
+            message: format!("Database returned an error: {:?}", err),
+        })
+    }
+}
