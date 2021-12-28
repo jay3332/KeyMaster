@@ -14,6 +14,25 @@ pub async fn create_user(
         password,
     }): Json<CreateUserData>,
 ) -> Result<JsonResponse<Success>, JsonResponse<Error>> {
+    let count = name.chars().count();
+    if count < 2 || count > 32 {
+        return Err(JsonResponse::new(
+            400,
+            Error {
+                message: "Name must be between 2 and 32 characters".to_string(),
+            },
+        ));
+    }
+
+    if password.len() <= 0 {
+        return Err(JsonResponse::new(
+            400,
+            Error {
+                message: "Password must be at least 1 character".to_string(),
+            },
+        ));
+    }
+
     let db = get_database!();
 
     let snowflake = generate_snowflake();
