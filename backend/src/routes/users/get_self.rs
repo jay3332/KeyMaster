@@ -21,6 +21,7 @@ pub async fn get_me(Auth(user_id): Auth) -> Result<JsonResponse<User>, JsonRespo
             id: user_id,
             name: user.name.clone(),
             discriminator: user.discriminator as u16,
+            email: user.email.clone(),
         },
     ))
 }

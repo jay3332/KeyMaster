@@ -22,6 +22,7 @@ pub async fn get_user(Path(id): Path<u64>) -> Result<JsonResponse<User>, JsonRes
             id,
             name: user.name.clone(),
             discriminator: user.discriminator as u16,
+            email: None,
         },
     ))
 }

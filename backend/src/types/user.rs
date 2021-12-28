@@ -10,6 +10,9 @@ pub struct User {
 
     /// The discriminator of this user.
     pub discriminator: u16,
+
+    /// The email of this user. This is only available through the `/users/me` route.
+    pub email: Option<String>,
 }
 
 impl Serialize for User {
@@ -17,11 +20,12 @@ impl Serialize for User {
     where
         S: Serializer,
     {
-        let mut state = serializer.serialize_struct("User", 3)?;
+        let mut state = serializer.serialize_struct("User", 4)?;
 
         state.serialize_field("id", &self.id)?;
         state.serialize_field("name", &self.name)?;
         state.serialize_field("discriminator", &self.discriminator)?;
+        state.serialize_field("email", &self.email)?;
         state.end()
     }
 }
