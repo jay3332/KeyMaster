@@ -4,6 +4,7 @@ use std::net::SocketAddr;
 pub async fn entrypoint() {
     let router = Router::new()
         .route("/", get(async || (StatusCode::OK, "Hello, world!")))
+        .merge(crate::routes::make_auth_routes())
         .merge(crate::routes::make_user_routes())
         .merge(crate::routes::make_quotes_routes());
 

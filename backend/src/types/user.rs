@@ -25,3 +25,15 @@ impl Serialize for User {
         state.end()
     }
 }
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct CreateUserData {
+    /// The username of this user.
+    pub name: String,
+
+    /// The email of this user.
+    pub email: String,
+
+    /// The password of this user.
+    pub password: String,
+}

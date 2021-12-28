@@ -6,13 +6,22 @@ license = "MIT"
 repository = "https://github.com/jay3332/KeyMaster"
 
 [dependencies]
+argon2-async = "0.1.1"
+async-trait = "0.1"
+base64 = "0.13.0"
 dotenv = "0.15.0"
 http = "0.2"
+rand = "0.8.4"
+ring = "0.16"
 serde = "1.0"
 
 [dependencies.axum]
 version = "0.4.3"
 features = ["headers"]
+
+[dependencies.rand_core]
+version = "0.6"
+features = ["std"]
 
 [dependencies.simd-json]
 version = "0.4"

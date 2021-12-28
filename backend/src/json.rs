@@ -49,6 +49,15 @@ where
     }
 }
 
+impl From<(u16, crate::types::Error)> for JsonResponse<crate::types::Error> {
+    fn from(status: (u16, crate::types::Error)) -> Self {
+        Self {
+            status: status.0,
+            json: status.1,
+        }
+    }
+}
+
 impl From<sqlx::Error> for JsonResponse<crate::types::Error> {
     fn from(err: sqlx::Error) -> Self {
         Self::new(
