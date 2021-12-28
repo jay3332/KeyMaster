@@ -8,13 +8,17 @@ use crate::types::{CreateUserData, Error, Success};
 
 /// POST /users
 pub async fn create_user(
-    Json(CreateUserData { name, email, password }): Json<CreateUserData>
+    Json(CreateUserData {
+        name,
+        email,
+        password,
+    }): Json<CreateUserData>,
 ) -> Result<JsonResponse<Success>, JsonResponse<Error>> {
     let db = get_database!();
 
     let snowflake = generate_snowflake();
     sqlx::query!(
-        "INSERT INTO users (id, name, discriminator, email, password) VALUES ($1, $2, $3, $4, $5)", 
+        "INSERT INTO users (id, name, discriminator, email, password) VALUES ($1, $2, $3, $4, $5)",
         snowflake as i64,
         name,
         {
@@ -30,17 +34,25 @@ pub async fn create_user(
 
             *available
                 .get(thread_rng().gen_range(0..available.len()))
-                .ok_or_else(|| (409, Error {
-                    message: "This username is already taken.".to_string()
-                }))?
+                .ok_or_else(|| {
+                    (
+                        409,
+                        Error {
+                            message: "This username is already taken.".to_string(),
+                        },
+                    )
+                })?
         },
         email,
-        hash(&password).await.map_err(|e| (500, Error {
-            message: format!("Could not hash password: {:?}", e),
-        }))?,
+        hash(&password).await.map_err(|e| (
+            500,
+            Error {
+                message: format!("Could not hash password: {:?}", e),
+            }
+        ))?,
     )
-        .execute(db)
-        .await?;
+    .execute(db)
+    .await?;
 
     Ok(JsonResponse::new(
         201,

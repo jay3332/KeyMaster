@@ -1,16 +1,16 @@
-use argon2_async::{Config, set_config};
+use argon2_async::{set_config, Config};
 
-use base64::{encode, decode};
-use ring::rand::{SystemRandom, SecureRandom};
+use base64::{decode, encode};
+use ring::rand::{SecureRandom, SystemRandom};
 
 use std::lazy::SyncOnceCell;
-use std::time::{SystemTime, UNIX_EPOCH};
 use std::sync::atomic::{AtomicU16, Ordering};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 static COUNTER: AtomicU16 = AtomicU16::new(0);
 
 pub static RNG: SyncOnceCell<SystemRandom> = SyncOnceCell::new();
-pub const EPOCH: u128 = 1_577_836_800_000;  // Jan 1 2020 @ 00:00:00 UTC
+pub const EPOCH: u128 = 1_577_836_800_000; // Jan 1 2020 @ 00:00:00 UTC
 
 pub async fn initiate_hasher() {
     set_config(Config::new_insecure()).await;
@@ -60,7 +60,7 @@ pub fn get_epoch_time() -> u128 {
 }
 
 /// Generates a snowflake.
-/// 
+///
 /// Snowflakes are 64 bit unsigned integers:
 /// The first 48 bits contain the amount of seconds since the KeyMaster epoch.
 /// The last 16 bits contain the increment number of an internal counter, allowing up to 4096 unique snowflakes per millisecond.

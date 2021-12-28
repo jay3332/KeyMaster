@@ -15,7 +15,7 @@ pub struct SessionData {
     pub user_id: u64,
 
     /// The session token which should be used to log into this session.
-    pub token: String, 
+    pub token: String,
 }
 
 impl Serialize for SessionData {
