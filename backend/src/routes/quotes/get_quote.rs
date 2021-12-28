@@ -20,9 +20,9 @@ pub async fn get_quote(Path(id): Path<u32>) -> Result<JsonResponse<Quote>, JsonR
         200,
         Quote {
             id,
-            author_id: quote.author_id.map_or(None, |o| Some(o as u64)),
+            author_id: quote.author_id.map(|o| o as u64),
             content: quote.content.clone(),
-            author: quote.author.map_or(None, |o| Some(o.clone())),
+            author: quote.author.map(|o| o.clone()),
         },
     ))
 }

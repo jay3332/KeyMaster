@@ -12,9 +12,9 @@ pub async fn get_random_quote() -> Result<JsonResponse<Quote>, JsonResponse<Erro
         200,
         Quote {
             id: quote.id as u32,
-            author_id: quote.author_id.map_or(None, |o| Some(o as u64)),
+            author_id: quote.author_id.map(|o| o as u64),
             content: quote.content.clone(),
-            author: quote.author.map_or(None, |o| Some(o.clone())),
+            author: quote.author.map(|o| o.clone()),
         },
     ))
 }
