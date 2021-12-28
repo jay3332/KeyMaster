@@ -11,7 +11,7 @@ pub async fn login(
 ) -> Result<JsonResponse<SessionData>, JsonResponse<Error>> {
     let db = get_database!();
 
-    let user = sqlx::query!("SELECT id, password FROM users WHERE email = $1", email,)
+    let user = sqlx::query!("SELECT id, password, permissions FROM users WHERE email = $1", email,)
         .fetch_optional(db)
         .await?
         .ok_or_else(|| {
@@ -40,9 +40,10 @@ pub async fn login(
     }
 
     let token = sqlx::query!(
-        "INSERT INTO auth_sessions (user_id, token) VALUES ($1, $2) RETURNING token",
+        "INSERT INTO auth_sessions (user_id, token, permissions) VALUES ($1, $2, $3) RETURNING token",
         user.id as i64,
         crate::auth::generate_token(user.id as u64),
+        user.permissions,
     )
     .fetch_one(db)
     .await?

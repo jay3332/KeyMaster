@@ -1,13 +1,16 @@
 use crate::json::JsonResponse;
 use axum::extract::Json;
 
-use crate::types::{Error, QuoteData, Success};
+use crate::routes::Auth;
+use crate::types::{Error, QuoteData, Success, UserPermissionFlags};
 
 /// POST /quotes
 /// Adds a single quote into the database.
 pub async fn add_quote(
     Json(QuoteData { content, author }): Json<QuoteData>,
+    Auth(_, permissions): Auth,
 ) -> Result<JsonResponse<Success>, JsonResponse<Error>> {
+    permissions.expect_permission(UserPermissionFlags::ADD_QUOTES)?;
     let db = get_database!();
 
     let response = sqlx::query!(

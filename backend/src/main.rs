@@ -1,4 +1,5 @@
 #![feature(async_closure)]
+#![feature(never_type)]
 #![feature(once_cell)]
 #![feature(proc_macro_hygiene)]
 #![deny(unsafe_code)]

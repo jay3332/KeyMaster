@@ -1,8 +1,9 @@
 use crate::json::JsonResponse;
 use crate::types::{Error, Quote};
+use crate::routes::Auth;
 
 /// GET /quotes
-pub async fn get_random_quote() -> Result<JsonResponse<Quote>, JsonResponse<Error>> {
+pub async fn get_random_quote(_: Auth) -> Result<JsonResponse<Quote>, JsonResponse<Error>> {
     let db = get_database!();
     let quote = sqlx::query!("SELECT * FROM quotes ORDER BY RANDOM()")
         .fetch_one(db)

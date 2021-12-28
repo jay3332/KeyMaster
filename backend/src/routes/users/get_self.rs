@@ -1,9 +1,9 @@
 use crate::json::JsonResponse;
 use crate::routes::Auth;
-use crate::types::{Error, User};
+use crate::types::{Error, User, UserPermissionFlags};
 
 /// GET /users/me
-pub async fn get_me(Auth(user_id): Auth) -> Result<JsonResponse<User>, JsonResponse<Error>> {
+pub async fn get_me(Auth(user_id, _): Auth) -> Result<JsonResponse<User>, JsonResponse<Error>> {
     let db = get_database!();
     let user = sqlx::query!("SELECT * FROM users WHERE id = $1", user_id as i64)
         .fetch_optional(db)
@@ -22,6 +22,7 @@ pub async fn get_me(Auth(user_id): Auth) -> Result<JsonResponse<User>, JsonRespo
             name: user.name.clone(),
             discriminator: user.discriminator as u16,
             email: user.email.clone(),
+            permissions: UserPermissionFlags::from_bits(user.permissions as u64),
         },
     ))
 }

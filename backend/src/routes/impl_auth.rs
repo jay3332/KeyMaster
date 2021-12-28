@@ -4,9 +4,9 @@ use http::header::AUTHORIZATION;
 
 use crate::auth::decode_token;
 use crate::json::JsonResponse;
-use crate::types::Error;
+use crate::types::{Error, UserPermissionFlags};
 
-pub struct Auth(pub u64);
+pub struct Auth(pub u64, pub UserPermissionFlags);
 
 #[async_trait::async_trait]
 impl FromRequest<Body> for Auth {
@@ -52,8 +52,8 @@ impl FromRequest<Body> for Auth {
         })?;
 
         let db = get_database!();
-        sqlx::query!(
-            "SELECT user_id FROM auth_sessions WHERE token = $1 AND user_id = $2",
+        let permissions = sqlx::query!(
+            "SELECT permissions FROM auth_sessions WHERE token = $1 AND user_id = $2",
             token,
             user_id as i64,
         )
@@ -66,8 +66,9 @@ impl FromRequest<Body> for Auth {
                     message: "Invalid token passed in 'Authorization' header.".to_string(),
                 },
             )
-        })?;
+        })?
+        .permissions;
 
-        Ok(Self(user_id))
+        Ok(Self(user_id, UserPermissionFlags::from_bits(permissions as u64).unwrap()))
     }
 }

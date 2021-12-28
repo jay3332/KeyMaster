@@ -1,12 +1,13 @@
 use crate::json::JsonResponse;
 use axum::extract::Path;
 
+use crate::routes::Auth;
 use crate::types::{Error, User};
 
 /// GET /users/:id
-pub async fn get_user(Path(id): Path<u64>) -> Result<JsonResponse<User>, JsonResponse<Error>> {
+pub async fn get_user(Path(id): Path<u64>, _: Auth) -> Result<JsonResponse<User>, JsonResponse<Error>> {
     let db = get_database!();
-    let user = sqlx::query!("SELECT * FROM users WHERE id = $1", id as i64)
+    let user = sqlx::query!("SELECT name, discriminator FROM users WHERE id = $1", id as i64)
         .fetch_optional(db)
         .await?
         .ok_or(JsonResponse::new(
@@ -23,6 +24,7 @@ pub async fn get_user(Path(id): Path<u64>) -> Result<JsonResponse<User>, JsonRes
             name: user.name.clone(),
             discriminator: user.discriminator as u16,
             email: None,
+            permissions: None,
         },
     ))
 }
