@@ -1,11 +1,14 @@
 use crate::json::JsonResponse;
-use crate::types::{Error, Quote};
 use crate::routes::Auth;
+use crate::types::{Error, Quote};
 
 use axum::extract::Path;
 
 /// GET /quotes/:id
-pub async fn get_quote(Path(id): Path<u32>, _: Auth) -> Result<JsonResponse<Quote>, JsonResponse<Error>> {
+pub async fn get_quote(
+    Path(id): Path<u32>,
+    _: Auth,
+) -> Result<JsonResponse<Quote>, JsonResponse<Error>> {
     let db = get_database!();
     let quote = sqlx::query!("SELECT * FROM quotes WHERE id = $1", id as i32)
         .fetch_optional(db)

@@ -1,7 +1,7 @@
-use bitflags::bitflags;
-use serde::{ser::SerializeStruct, Deserialize, Serialize, Serializer};
 use crate::json::JsonResponse;
 use crate::types::Error;
+use bitflags::bitflags;
+use serde::{ser::SerializeStruct, Deserialize, Serialize, Serializer};
 
 #[derive(Deserialize, Clone)]
 pub struct User {
@@ -52,11 +52,17 @@ impl UserPermissionFlags {
     }
 
     pub fn has_any_permission(&self, permissions: &[UserPermissionFlags]) -> bool {
-        self.contains(UserPermissionFlags::OWNER) || permissions.iter().any(|permission| self.contains(*permission))
+        self.contains(UserPermissionFlags::OWNER)
+            || permissions
+                .iter()
+                .any(|permission| self.contains(*permission))
     }
 
     pub fn has_all_permissions(&self, permissions: &[UserPermissionFlags]) -> bool {
-        self.contains(UserPermissionFlags::OWNER) || permissions.iter().all(|permission| self.contains(*permission))
+        self.contains(UserPermissionFlags::OWNER)
+            || permissions
+                .iter()
+                .all(|permission| self.contains(*permission))
     }
 
     fn err() -> Result<!, JsonResponse<Error>> {
@@ -68,21 +74,30 @@ impl UserPermissionFlags {
         ))
     }
 
-    pub fn expect_permission(&self, permission: UserPermissionFlags) -> Result<(), JsonResponse<Error>> {
+    pub fn expect_permission(
+        &self,
+        permission: UserPermissionFlags,
+    ) -> Result<(), JsonResponse<Error>> {
         if !self.has_permission(permission) {
             Self::err()?
         }
         Ok(())
     }
 
-    pub fn expect_any_permission(&self, permissions: &[UserPermissionFlags]) -> Result<(), JsonResponse<Error>> {
+    pub fn expect_any_permission(
+        &self,
+        permissions: &[UserPermissionFlags],
+    ) -> Result<(), JsonResponse<Error>> {
         if !self.has_any_permission(permissions) {
             Self::err()?
         }
         Ok(())
     }
 
-    pub fn expect_all_permissions(&self, permissions: &[UserPermissionFlags]) -> Result<(), JsonResponse<Error>> {
+    pub fn expect_all_permissions(
+        &self,
+        permissions: &[UserPermissionFlags],
+    ) -> Result<(), JsonResponse<Error>> {
         if !self.has_all_permissions(permissions) {
             Self::err()?
         }

@@ -1,6 +1,6 @@
 use crate::json::JsonResponse;
-use crate::types::{Error, Quote};
 use crate::routes::Auth;
+use crate::types::{Error, Quote};
 
 /// GET /quotes
 pub async fn get_random_quote(_: Auth) -> Result<JsonResponse<Quote>, JsonResponse<Error>> {

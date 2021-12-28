@@ -5,17 +5,23 @@ use crate::routes::Auth;
 use crate::types::{Error, User};
 
 /// GET /users/:id
-pub async fn get_user(Path(id): Path<u64>, _: Auth) -> Result<JsonResponse<User>, JsonResponse<Error>> {
+pub async fn get_user(
+    Path(id): Path<u64>,
+    _: Auth,
+) -> Result<JsonResponse<User>, JsonResponse<Error>> {
     let db = get_database!();
-    let user = sqlx::query!("SELECT name, discriminator FROM users WHERE id = $1", id as i64)
-        .fetch_optional(db)
-        .await?
-        .ok_or(JsonResponse::new(
-            404,
-            Error {
-                message: "User not found".to_string(),
-            },
-        ))?;
+    let user = sqlx::query!(
+        "SELECT name, discriminator FROM users WHERE id = $1",
+        id as i64
+    )
+    .fetch_optional(db)
+    .await?
+    .ok_or(JsonResponse::new(
+        404,
+        Error {
+            message: "User not found".to_string(),
+        },
+    ))?;
 
     Ok(JsonResponse::new(
         200,

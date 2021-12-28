@@ -11,17 +11,20 @@ pub async fn login(
 ) -> Result<JsonResponse<SessionData>, JsonResponse<Error>> {
     let db = get_database!();
 
-    let user = sqlx::query!("SELECT id, password, permissions FROM users WHERE email = $1", email,)
-        .fetch_optional(db)
-        .await?
-        .ok_or_else(|| {
-            (
-                404,
-                Error {
-                    message: "User not found".to_string(),
-                },
-            )
-        })?;
+    let user = sqlx::query!(
+        "SELECT id, password, permissions FROM users WHERE email = $1",
+        email,
+    )
+    .fetch_optional(db)
+    .await?
+    .ok_or_else(|| {
+        (
+            404,
+            Error {
+                message: "User not found".to_string(),
+            },
+        )
+    })?;
 
     if !verify(password, user.password).await.map_err(|_| {
         (

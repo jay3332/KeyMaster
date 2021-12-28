@@ -69,6 +69,9 @@ impl FromRequest<Body> for Auth {
         })?
         .permissions;
 
-        Ok(Self(user_id, UserPermissionFlags::from_bits(permissions as u64).unwrap()))
+        Ok(Self(
+            user_id,
+            UserPermissionFlags::from_bits(permissions as u64).unwrap(),
+        ))
     }
 }

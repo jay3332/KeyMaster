@@ -10,9 +10,9 @@ macro_rules! serde_bitflags {
             }
         }
 
-        use serde::Deserializer;
         use crate::macros::serde_bitflags::U64Visitor;
-        
+        use serde::Deserializer;
+
         impl<'de> Deserialize<'de> for $tt {
             fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
             where
