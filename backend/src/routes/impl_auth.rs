@@ -42,36 +42,40 @@ impl FromRequest<Body> for Auth {
             )
         })?;
 
-        let user_id = decode_token(token.clone()).ok_or_else(|| {
-            (
-                500,
-                Error {
-                    message: "Could not decode token.".to_string(),
-                },
-            )
-        })?;
-
-        let db = get_database!();
-        let permissions = sqlx::query!(
-            "SELECT permissions FROM auth_sessions WHERE token = $1 AND user_id = $2",
-            token,
-            user_id as i64,
-        )
-        .fetch_optional(db)
-        .await?
-        .ok_or_else(|| {
-            (
-                401,
-                Error {
-                    message: "Invalid token passed in 'Authorization' header.".to_string(),
-                },
-            )
-        })?
-        .permissions;
-
-        Ok(Self(
-            user_id,
-            UserPermissionFlags::from_bits(permissions as u64).unwrap(),
-        ))
+        Ok(get_auth(token).await?)
     }
+}
+
+pub async fn get_auth(token: String) -> Result<Auth, JsonResponse<Error>> {
+    let user_id = decode_token(token.clone()).ok_or_else(|| {
+        (
+            500,
+            Error {
+                message: "Could not decode token.".to_string(),
+            },
+        )
+    })?;
+
+    let db = get_database!();
+    let permissions = sqlx::query!(
+        "SELECT permissions FROM auth_sessions WHERE token = $1 AND user_id = $2",
+        token,
+        user_id as i64,
+    )
+    .fetch_optional(db)
+    .await?
+    .ok_or_else(|| {
+        (
+            401,
+            Error {
+                message: "Received invalid token.".to_string(),
+            },
+        )
+    })?
+    .permissions;
+
+    Ok(Auth(
+        user_id,
+        UserPermissionFlags::from_bits(permissions as u64).unwrap(),
+    ))
 }

@@ -1,4 +1,5 @@
 use axum::body::{self, BoxBody, Bytes};
+use axum::extract::ws::{Message, WebSocket};
 use axum::response::IntoResponse;
 use http::header::CONTENT_TYPE;
 use http::{HeaderValue, Response};
@@ -11,6 +12,8 @@ pub struct JsonResponse<T: Serialize> {
     /// The JSON data represented as a Rust object.
     pub json: T,
 }
+
+pub struct WebSocketJsonResponse<T: Serialize>(pub T);
 
 impl<T> JsonResponse<T>
 where
@@ -46,6 +49,13 @@ where
         };
 
         build_response_from(self.status, "application/json", body::Full::from(data))
+    }
+}
+
+impl<T: Serialize> WebSocketJsonResponse<T> {
+    pub async fn send(&self, ws: &mut WebSocket) -> Result<(), axum::Error> {
+        ws.send(Message::Binary(simd_json::to_vec(&self.0).unwrap()))
+            .await
     }
 }
 
