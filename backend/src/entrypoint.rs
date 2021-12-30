@@ -6,7 +6,8 @@ pub async fn entrypoint() {
         .route("/", get(async || (StatusCode::OK, "Hello, world!")))
         .merge(crate::routes::make_auth_routes())
         .merge(crate::routes::make_user_routes())
-        .merge(crate::routes::make_quotes_routes());
+        .merge(crate::routes::make_quotes_routes())
+        .merge(crate::routes::make_ws_routes());
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8081));
     let server = axum::Server::bind(&addr)
