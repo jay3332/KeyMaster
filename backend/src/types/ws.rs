@@ -18,6 +18,9 @@ pub enum WebSocketInboundEvent {
     /// This signals the server to start receiving `KeyPress` events.
     Start,
 
+    /// Gracefully quit this typing session.
+    Quit,
+
     /// Signify that a key was pressed.
     KeyPress {
         /// The key which was pressed.
@@ -39,10 +42,10 @@ pub enum WebSocketOutboundEvent {
 
     /// The user has finished typing the quote - give statistics.
     PracticeQuoteFinish {
-        quote: Quote,
         wpm: f32,
         wpm_raw: f32,
         accuracy: f32,
         replay: String,
+        errors: u16,
     },
 }
