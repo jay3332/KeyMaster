@@ -1,7 +1,7 @@
 use axum::extract::ws::{WebSocket, WebSocketUpgrade};
 use axum::response::IntoResponse;
 
-use std::time::Instant;
+use tokio::time::Instant;
 
 use crate::json::WebSocketJsonResponse;
 use crate::routes::{get_auth, quotes::get_random_quote, Auth, ExtractJson};
@@ -62,17 +62,26 @@ pub async fn practice_quote(ws_upgrade: WebSocketUpgrade) -> impl IntoResponse {
                         0.0f32
                     };
 
+                    let elapsed = start.elapsed().as_secs_f32();
                     let wpm = accuracy
                         * if index > 0 {
-                            (index as f32 / 5.0) / (start.elapsed().as_secs_f32() / 60.0)
+                            (index as f32 / 5.0) / (elapsed / 60.0)
                         } else {
                             0.0f32
                         };
 
+                    let escaped_key = if key == "," {
+                        "co".to_string()
+                    } else if key == ";" {
+                        "se".to_string()
+                    } else {
+                        key.clone()
+                    };
+
                     replay.push(format!(
                         "{},{},{},{},{}",
-                        key,
-                        start.elapsed().as_millis(),
+                        escaped_key,
+                        elapsed,
                         wpm,
                         accuracy,
                         errors
@@ -108,8 +117,8 @@ pub async fn practice_quote(ws_upgrade: WebSocketUpgrade) -> impl IntoResponse {
 
                         replay.push(format!(
                             "{},{},{},{},{}",
-                            key,
-                            start.elapsed().as_millis(),
+                            escaped_key,
+                            elapsed,
                             wpm,
                             accuracy,
                             errors
